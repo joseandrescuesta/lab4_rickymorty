@@ -1,23 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import Episodio from "./componentes/Episodio";
+import Lista from "./componentes/Lista";
+import { useDispatch, useSelector } from "react-redux";
+import Localizacion from "./componentes/Localizacion";
+import { setInc, setInfo } from "./action";
 
 function App() {
+
+  let disp = useDispatch();
+
+  const endpoint = "https://rickandmortyapi.com/api/character";
+
+  async function getData() {
+    try {
+      const rta = await fetch(endpoint);
+
+      if (rta.ok) {
+
+        const datos = await rta.json();
+        console.log(datos.results);
+        disp(setInfo(datos.results));
+      } else {
+        throw new Error("Er:" + rta.error);
+      }
+
+    } catch (error) {
+      console.log("ERROR:" + error);
+    }
+  };
+
+  function getDatos() {
+    getData();
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Personajes de Rick y Morty</h1>
+      <button onClick={getData}>Consultar API</button>
+      <div style={{ display: "flex", flexDirection: "row" }}>
+        <Lista />
+        <Episodio />
+        <Localizacion />
+      </div>
     </div>
   );
 }
